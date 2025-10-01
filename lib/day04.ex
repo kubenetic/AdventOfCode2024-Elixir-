@@ -74,9 +74,8 @@ defmodule AoC.Day04 do
     rows = data |> length()
     cols = data |> hd() |> length()
 
-    pattern = ~r/(MAS)|(SAM)/
     get = fn r, c -> get_in(data, [Access.at(r), Access.at(c)]) end
-
+    ms? = fn a, b -> (a == "M" and b == "S") or (a == "S" and b == "M") end
 
     for r <- 1..(rows - 2), c <- 1..(cols - 2), reduce: 0 do
       acc ->
@@ -86,10 +85,7 @@ defmodule AoC.Day04 do
         tr = get.(r - 1, c + 1)
         br = get.(r + 1, c + 1)
 
-        dm = "#{tl}#{ce}#{br}"
-        ds = "#{tr}#{ce}#{bl}"
-
-        if Regex.match?(pattern, dm) and Regex.match?(pattern, ds) do
+        if ce == "A" and ms?.(tl, br) and ms?.(tr, bl) do
           acc + 1
         else
           acc
