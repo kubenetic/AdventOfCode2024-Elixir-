@@ -24,21 +24,35 @@ defmodule Day04Test do
 
   test "retrieve full main axis" do
     actual = get_input() |> M.axis(0, 0, :main)
-    expected = "MSXMAXSAMX"
+    expected = String.split("MSXMAXSAMX", "", trim: true)
 
     assert actual == expected
   end
 
   test "retrieve main parallel axis" do
     actual = get_input() |> M.axis(2, 0, :main)
-    expected = "ASAMSAMA"
+    expected = String.split("ASAMSAMA", "", trim: true)
 
     assert actual == expected
   end
 
   test "retrieve full secondary axis" do
     actual = get_input() |> M.axis(0, 9, :secondary)
-    expected = "MSAMMMMXAM"
+    expected = String.split("MSAMMMMXAM", "", trim: true)
+
+    assert actual == expected
+  end
+
+  test "scan the whole input" do
+    actual = get_input() |> M.part1()
+    expected = 18
+
+    assert actual == expected
+  end
+
+  test "scan for X-MAS" do
+    actual = get_input() |> M.part2()
+    expected = 9
 
     assert actual == expected
   end
