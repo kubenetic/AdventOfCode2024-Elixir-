@@ -64,7 +64,7 @@ defmodule Day06Test do
 
   test "walk the guard through the table" do
     input = process_input()
-    actual = M.walk(input)
+    actual = M.part1(input)
     expected = 41
 
     assert actual == expected

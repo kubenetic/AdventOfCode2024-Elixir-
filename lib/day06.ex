@@ -24,31 +24,26 @@ defmodule AoC.Day06 do
     {mov_x, mov_y} = direction(guard)
     {next_x, next_y} = {x + mov_x, y + mov_y}
 
-    current_row = get_in(table, [Access.key!(x)])
+    next_field = get_in(table, [Access.key(next_x, %{}), Access.key(next_y, %{})])
+    case next_field do
+      "#" ->
+        table
+        |> put_in([Access.key!(x), Access.key!(y)], turn_right(guard))
+        |> step(x, y, acc)
 
-    next_field = get_in(table, [Access.key(next_x, nil), Access.key(next_y, nil)])
+      "." ->
+        table
+        |> put_in([Access.key!(x), Access.key!(y)], "X")
+        |> put_in([Access.key!(next_x), Access.key!(next_y)], guard)
+        |> step(next_x, next_y, acc + 1)
 
-    cond do
-      next_field == "#" ->
-        rotated_guard = turn_right(guard)
-        updated_row = Map.update!(current_row, y, fn _ -> rotated_guard end)
-        updated_table = Map.update!(table, x, fn _ -> updated_row end)
-        step(updated_table, x, y, acc)
+      "X" ->
+        table
+        |> put_in([Access.key!(x), Access.key!(y)], "X")
+        |> put_in([Access.key!(next_x), Access.key!(next_y)], guard)
+        |> step(next_x, next_y, acc)
 
-      next_field == "." or next_field == "X" ->
-        updated_current_row = Map.update!(current_row, y, fn _ -> "X" end)
-        updated_table = Map.update!(table, x, fn _ -> updated_current_row end)
-
-        next_row = get_in(updated_table, [Access.key!(next_x)])
-        updated_next_row = Map.update!(next_row, next_y, fn _ -> guard end)
-
-        updated_table = Map.update!(updated_table, next_x, fn _ -> updated_next_row end)
-
-        steps = if next_field == "X" do acc else acc + 1 end
-
-        step(updated_table, next_x, next_y, steps)
-
-      true ->
+      %{} ->
         acc + 1
     end
   end
@@ -69,7 +64,7 @@ defmodule AoC.Day06 do
     |> Map.new(fn {row, idx} -> {idx, row} end)
   end
 
-  def walk(table) do
+  def part1(table) do
     {x, y} = find_guard(table)
     indexed_table = index_table(table)
     step(indexed_table, x, y, 0)
